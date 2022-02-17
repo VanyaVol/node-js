@@ -9,11 +9,19 @@
 </head>
 <body>
 <form action="/login" method="post">
-    <label>
-        Login:
-        <input type="text" name="login">
+    <label style="display: flex; flex-direction: column; width: 300px">
+        First name:
+        <input type="text" name="firstName">
+        Last name:
+        <input type="text" name="lastName">
+        Email:
+        <input type="text" name="email">
         Password:
         <input type="text" name="password">
+        Age:
+        <input type="text" name="age">
+        City:
+        <input type="text" name="city">
         <input type="submit" value="Send">
     </label>
 </form>

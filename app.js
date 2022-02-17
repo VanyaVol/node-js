@@ -15,8 +15,8 @@ app.set('views', path.join(__dirname, 'static'));
 let arrayUsers = [{
     firstName: 'Ivan',
     lastName: 'Voloshyn',
-    email: 'vasdggg@mail.ua',
-    password: 'asdasdad',
+    email: 'v@mail.ua',
+    password: '1204',
     age: '22',
     city: 'Lviv'
 }, {
@@ -54,6 +54,19 @@ app.post('/login', (req, res) => {
     }
 });
 
+app.get('/signin', (req, res) => {
+    res.render('signIn');
+});
+
+app.post('/signin', (req, res) => {
+    const {email, password} = req.body;
+    for (let i = 0; i < arrayUsers.length; i++) {
+        if ((arrayUsers[i].email === email) && (arrayUsers[i].password === password)) {
+            res.redirect(`/user/${i + 1}`);
+        }
+    }
+})
+
 app.get('/users', (req, res) => {
     const {age = '', city = ''} = req.query;
     let users = arrayUsers;
@@ -68,7 +81,8 @@ app.get('/users', (req, res) => {
 
 app.get('/user/:userId', (req, res) => {
     const {userId} = req.params;
-    res.json(arrayUsers[userId - 1]);
+    const user = arrayUsers[userId - 1];
+    res.render('user', {user});
 });
 
 app.get('/error', (req, res) => {
@@ -79,6 +93,7 @@ app.use((req, res) => {
     res.render('notFound');
 });
 
-app.listen(5005, () => {
+
+app.listen(5000, () => {
     console.log('Start PORT 5000');
 })

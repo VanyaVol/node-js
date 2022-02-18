@@ -13,13 +13,9 @@ app.engine('.hbs', engine({defaultLayout: false}));
 app.set('views', path.join(__dirname, 'static'));
 
 let arrayUsers = [{
-    firstName: 'Ivan',
-    lastName: 'Voloshyn',
-    email: 'v@mail.ua',
-    password: '1204',
-    age: '22',
-    city: 'Lviv'
+    id: 1, firstName: 'Ivan', lastName: 'Voloshyn', email: 'v@mail.ua', password: '1204', age: '22', city: 'Lviv'
 }, {
+    id: 2,
     firstName: 'Ivan',
     lastName: 'Voloshyn',
     email: 'vaavavvava@mail.ua',
@@ -27,6 +23,7 @@ let arrayUsers = [{
     age: '21',
     city: 'Kiev'
 }, {
+    id: 3,
     firstName: 'Ivan',
     lastName: 'Voloshyn',
     email: 'vaavavvavaddd@mail.ua',
@@ -41,6 +38,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     let isEmail = false;
+
     for (const user of arrayUsers) {
         if (user.email === req.body.email) {
             isEmail = true;
@@ -48,8 +46,10 @@ app.post('/login', (req, res) => {
             break;
         }
     }
+
     if (!isEmail) {
-        arrayUsers.push(req.body);
+        const user = {...req.body, id: arrayUsers.length + 1};
+        arrayUsers.push(user);
         res.redirect('/users');
     }
 });
@@ -60,6 +60,7 @@ app.get('/signin', (req, res) => {
 
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
+
     for (let i = 0; i < arrayUsers.length; i++) {
         if ((arrayUsers[i].email === email) && (arrayUsers[i].password === password)) {
             res.redirect(`/user/${i + 1}`);
@@ -70,18 +71,30 @@ app.post('/signin', (req, res) => {
 app.get('/users', (req, res) => {
     const {age = '', city = ''} = req.query;
     let users = arrayUsers;
+
     if (age) {
         users = users.filter(value => value.age === age);
     }
+
     if (city) {
         users = users.filter(value => value.city === city);
     }
+
     res.render('users', {users});
+});
+
+app.post('/user/:userId', (req, res) => {
+    const {userId} = req.params;
+
+    delete arrayUsers[userId - 1];
+
+    res.redirect('/users');
 });
 
 app.get('/user/:userId', (req, res) => {
     const {userId} = req.params;
     const user = arrayUsers[userId - 1];
+
     res.render('user', {user});
 });
 
@@ -92,7 +105,6 @@ app.get('/error', (req, res) => {
 app.use((req, res) => {
     res.render('notFound');
 });
-
 
 app.listen(5000, () => {
     console.log('Start PORT 5000');
